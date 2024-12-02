@@ -3,7 +3,7 @@ name: Tag Commits with Version
 on:
   push:
     branches:
-      - master  # Specify the branch to monitor Yes good
+      - master # Define the branches to monitor
 
 jobs:
   tag-commit:
@@ -17,44 +17,73 @@ jobs:
         run: |
           git config user.name "${{ secrets.GIT_USER_NAME }}"
           git config user.email "${{ secrets.GIT_USER_EMAIL }}"
-
+          
+      - name: Fetch the latest Tags
+        run: git fetch --tags
+     
       - name: Determine Latest Tag
         id: get-latest-tag
         run: |
-          # Get the latest tag, or default to v0.0.0 if no tags exist
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        
+          LATEST_TAG=$(git describe --tags --abbrev=0 )
+          echo "Fetched latest tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Calculate New Version
         id: calculate-version
         run: |
+          LATEST_TAG=${{ steps.get-latest-tag.outputs.LATEST_TAG }}
+          echo "Latest Tag: $LATEST_TAG"
+
           # Extract the major, minor, and patch parts of the latest version
           IFS='.' read -r -a VERSION_PARTS <<< "${LATEST_TAG#v}"
           MAJOR=${VERSION_PARTS[0]}
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
 
-          # Increment the major version
-          MAJOR=$((MAJOR + 2))
-          MINOR=$((MINOR + 1)) # Reset minor version when major is incremented
-          PATCH=0  # Reset patch version when major is incremented
+          # Ensure numeric values
+          MAJOR=$((MAJOR))
+          MINOR=$((MINOR))
+          PATCH=$((PATCH))
 
-          # Construct the new version tag
+          # Function to generate a new version
+          generate_new_version() {
+            while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
+              echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing the version..."
+              MINOR=$((MINOR + 1))
+              PATCH=0
+            done
+          }
+
+          # Initial increment
+          MINOR=$((MINOR + 1))
+          PATCH=0
+          generate_new_version
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+
+          echo "New Version: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Create and Push New Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ env.NEW_VERSION }}
         run: |
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
-          
-          # Check if the tag already exists in the remote repository
-          if git ls-remote --tags origin | grep -q "refs/tags/$NEW_VERSION"; then
-            echo "Tag $NEW_VERSION already exists. Skipping tag creation."
-            exit 0
-          fi
-
-          # Create and push the new tag
+          echo "Pushing new tag: $NEW_VERSION"
           git tag $NEW_VERSION
-          git push origin $NEW_VERSION
+          git push origin $NEW_VERSION || {
+            echo "Failed to push tag $NEW_VERSION. Tag already exists."
+            exit 1
+          }
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.NEW_VERSION }}
+          release_name: "Release for commit ${{ steps.get-latest-tag.outputs.LATEST_TAG }}"
+          body: "This release includes the following commit: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}"
+          draft: false
+          prerelease: false
