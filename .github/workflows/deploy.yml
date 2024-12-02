@@ -29,7 +29,6 @@ jobs:
       - name: Calculate New Version
         id: calculate-version
         run: |
-          # Fetch the latest tag from the environment
           LATEST_TAG=${{ steps.get-latest-tag.outputs.LATEST_TAG }}
           echo "Latest Tag: $LATEST_TAG"
 
@@ -39,16 +38,18 @@ jobs:
           MINOR=${VERSION_PARTS[1]:-0}
           PATCH=${VERSION_PARTS[2]:-0}
 
-          # Increment the patch version
-          PATCH=$((PATCH + 1))
-          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
-
-          # Loop to check if the tag exists and increment the minor version if it does
-          while git rev-parse "$NEW_VERSION" >/dev/null 2>&1; do
-            echo "Tag $NEW_VERSION already exists. Incrementing the patch version..."
-            PATCH=$((PATCH + 1))
+          # Function to generate a new version
+          function generate_new_version {
             NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
-          done
+            while git rev-parse "$NEW_VERSION" >/dev/null 2>&1; do
+              PATCH=$((PATCH + 1))
+              NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+            done
+          }
+
+          # Generate the new version tag
+          PATCH=$((PATCH + 1))
+          generate_new_version
 
           echo "New Version: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
