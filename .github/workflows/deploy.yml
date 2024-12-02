@@ -45,9 +45,8 @@ jobs:
 
           # Loop to check if the tag exists and increment the minor version if it does
           while git rev-parse "$NEW_VERSION" >/dev/null 2>&1; do
-            echo "Tag $NEW_VERSION already exists. Incrementing the minor version..."
-            MINOR=$((MINOR + 1))
-            PATCH=0
+            echo "Tag $NEW_VERSION already exists. Incrementing the patch version..."
+            PATCH=$((PATCH + 1))
             NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
           done
 
