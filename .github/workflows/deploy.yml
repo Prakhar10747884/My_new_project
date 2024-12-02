@@ -29,11 +29,15 @@ jobs:
       - name: Calculate New Version
         id: calculate-version
         run: |
+          # Fetch the latest tag from the environment
           LATEST_TAG=${{ steps.get-latest-tag.outputs.LATEST_TAG }}
+          echo "Latest Tag: $LATEST_TAG"
+
+          # Extract the major, minor, and patch parts of the latest version
           IFS='.' read -r -a VERSION_PARTS <<< "${LATEST_TAG#v}"
-          MAJOR=${VERSION_PARTS[0]}
-          MINOR=${VERSION_PARTS[1]}
-          PATCH=${VERSION_PARTS[2]}
+          MAJOR=${VERSION_PARTS[0]:-0}
+          MINOR=${VERSION_PARTS[1]:-0}
+          PATCH=${VERSION_PARTS[2]:-0}
 
           # Increment the patch version
           PATCH=$((PATCH + 1))
@@ -47,6 +51,7 @@ jobs:
             NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
           done
 
+          echo "New Version: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Create and Push New Tag
