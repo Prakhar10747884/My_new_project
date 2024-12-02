@@ -38,16 +38,22 @@ jobs:
           MINOR=${VERSION_PARTS[1]:-0}
           PATCH=${VERSION_PARTS[2]:-0}
 
-          # Initial increment
-          PATCH=$((PATCH + 1))
-          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          # Function to generate a new version
+          function generate_new_version {
+            while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
+              echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing the version..."
+              PATCH=$((PATCH + 1))
+              if [ "$PATCH" -ge 10 ]; then
+                PATCH=0
+                MINOR=$((MINOR + 1))
+              fi
+            done
+          }
 
-          # Check if tag exists and increment until a unique tag is found
-          while git rev-parse "$NEW_VERSION" >/dev/null 2>&1; do
-            echo "Tag $NEW_VERSION already exists. Incrementing the patch version..."
-            PATCH=$((PATCH + 1))
-            NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
-          done
+          # Generate the new version tag
+          PATCH=$((PATCH + 1))
+          generate_new_version
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
 
           echo "New Version: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
