@@ -3,7 +3,7 @@ name: Tag Commits with Version
 on:
   push:
     branches:
-      - master # Define the branches to monitor
+      - master #Hello my world
 
 jobs:
   tag-commit:
@@ -32,7 +32,7 @@ jobs:
       - name: Calculate New Version
         id: calculate-version
         run: |
-          LATEST_TAG=${{ steps.get-latest-tag.outputs.LATEST_TAG }}
+          # Extract the major, minor, and patch parts of the latest version
           IFS='.' read -r -a VERSION_PARTS <<< "${LATEST_TAG#v}"
           MAJOR=${VERSION_PARTS[0]}
           MINOR=${VERSION_PARTS[1]}
@@ -42,12 +42,19 @@ jobs:
           PATCH=$((PATCH + 1))
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
 
+          # Loop to check if the tag exists and increment the minor version if it does
+          while git rev-parse "$NEW_VERSION" >/dev/null 2>&1; do
+            echo "Tag $NEW_VERSION already exists. Incrementing the minor version..."
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          done
+
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Create and Push New Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEW_VERSION: ${{ env.NEW_VERSION }}
         run: |
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git tag $NEW_VERSION
