@@ -35,22 +35,17 @@ jobs:
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
 
+          # Increment the patch version
           MINOR=$((MINOR + 1))
-
-          # Function to increment the version if the tag exists
-          function generate_new_version {
-            while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
-              echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing the minor version..."
-              MINOR=$((MINOR + 1))
-              PATCH=0
-            done
-          }
-
-        
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
 
-          # Check and increment if necessary
-          generate_new_version
+          # Loop to check if the tag exists and increment the minor version if it does
+          while git rev-parse "$NEW_VERSION" >/dev/null 2>&1; do
+            echo "Tag $NEW_VERSION already exists. Incrementing the minor version..."
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          done
 
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
