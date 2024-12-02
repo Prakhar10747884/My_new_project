@@ -64,8 +64,12 @@ jobs:
           NEW_VERSION: ${{ env.NEW_VERSION }}
         run: |
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          echo "Pushing new tag: $NEW_VERSION"
           git tag $NEW_VERSION
-          git push origin $NEW_VERSION
+          git push origin $NEW_VERSION || {
+            echo "Failed to push tag $NEW_VERSION. Tag already exists."
+            exit 1
+          }
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
