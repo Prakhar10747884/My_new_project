@@ -38,7 +38,7 @@ jobs:
           MAJOR=$((MAJOR + 1))
 
           # Construct the new version tag
-          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}-$(date +'%Y%m%d%H%M%S')"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Create and Push New Tag
