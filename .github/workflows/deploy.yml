@@ -3,7 +3,7 @@ name: Tag Commits with Version
 on:
   push:
     branches:
-      - master #Hello my world
+      - master # Define the branches to monitor
 
 jobs:
   tag-commit:
@@ -23,16 +23,13 @@ jobs:
         run: |
           echo "Fetching the latest tag from the repository..."
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          if [ "$LATEST_TAG" = "fatal: No names found, cannot describe anything." ]; then
-            LATEST_TAG="v0.0.0"
-          fi
           echo "Fetched latest tag: $LATEST_TAG"
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Calculate New Version
         id: calculate-version
         run: |
-          # Extract the major, minor, and patch parts of the latest version
+          LATEST_TAG=${{ steps.get-latest-tag.outputs.LATEST_TAG }}
           IFS='.' read -r -a VERSION_PARTS <<< "${LATEST_TAG#v}"
           MAJOR=${VERSION_PARTS[0]}
           MINOR=${VERSION_PARTS[1]}
@@ -55,6 +52,7 @@ jobs:
       - name: Create and Push New Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ env.NEW_VERSION }}
         run: |
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git tag $NEW_VERSION
