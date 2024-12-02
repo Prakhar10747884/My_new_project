@@ -3,7 +3,7 @@ name: Tag Commits with Version
 on:
   push:
     branches:
-      - main 
+      - master 
 
 jobs:
   tag-commit:
