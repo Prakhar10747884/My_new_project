@@ -21,13 +21,10 @@ jobs:
       - name: Determine Latest Tag
         id: get-latest-tag
         run: |
-            echo "Fetching the latest tag from the repository..."
-            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null )
-            echo "Fetched latest tag: $LATEST_TAG"
-            echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
-
-        
-
+          echo "Fetching the latest tag from the repository..."
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Fetched latest tag: $LATEST_TAG"
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Calculate New Version
         id: calculate-version
@@ -38,11 +35,23 @@ jobs:
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
 
-          # Increment the minor version (update this logic if needed for major/patch increments)
           MINOR=$((MINOR + 1))
 
-          # Construct the new version tag
+          # Function to increment the version if the tag exists
+          function generate_new_version {
+            while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
+              echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing the minor version..."
+              MINOR=$((MINOR + 1))
+              PATCH=0
+            done
+          }
+
+        
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+
+          # Check and increment if necessary
+          generate_new_version
+
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Create and Push New Tag
