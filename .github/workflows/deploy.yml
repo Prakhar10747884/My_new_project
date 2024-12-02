@@ -29,7 +29,8 @@ jobs:
       - name: Calculate New Version
         id: calculate-version
         run: |
-          LATEST_TAG=${{ steps.get-latest-tag.outputs.LATEST_TAG }}
+          echo "Starting version calculation..."
+          LATEST_TAG="${LATEST_TAG:=v0.0.0}"
           echo "Latest Tag: $LATEST_TAG"
 
           # Extract the major, minor, and patch parts of the latest version
@@ -39,18 +40,18 @@ jobs:
           PATCH=${VERSION_PARTS[2]:-0}
 
           # Function to generate a new version
-          function generate_new_version {
+          generate_new_version() {
             while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
               echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing the version..."
               PATCH=$((PATCH + 1))
-              if [ "$PATCH" -ge 10 ]; then
+              if [ "$PATCH" -ge 100 ]; then
                 PATCH=0
                 MINOR=$((MINOR + 1))
               fi
             done
           }
 
-          # Generate the new version tag
+          # Initial increment
           PATCH=$((PATCH + 1))
           generate_new_version
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
