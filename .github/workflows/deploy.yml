@@ -36,7 +36,7 @@ jobs:
           PATCH=${VERSION_PARTS[2]}
 
           # Increment the patch version
-          MINOR=$((MINOR + 1))
+          MINOR=$((MINOR + 2))
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
 
           # Loop to check if the tag exists and increment the minor version if it does
