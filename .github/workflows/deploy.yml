@@ -3,7 +3,7 @@ name: Tag Commits with Version
 on:
   push:
     branches:
-      - master #Hello my world
+      - main  # Specify the branch to monitor
 
 jobs:
   tag-commit:
@@ -21,9 +21,8 @@ jobs:
       - name: Determine Latest Tag
         id: get-latest-tag
         run: |
-          echo "Fetching the latest tag from the repository..."
-          LATEST_TAG=$(git describe --tags --abbrev=0 )
-          echo "Fetched latest tag: $LATEST_TAG"
+          # Get the latest tag, or default to v0.0.0 if no tags exist
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
       - name: Calculate New Version
@@ -35,8 +34,10 @@ jobs:
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
 
-          # Increment the minor version (update this logic if needed for major/patch increments)
-          MINOR=$((MINOR + 1))
+          # Increment the major version
+          MAJOR=$((MAJOR + 2))
+          MINOR=$((MINOR + 1)) # Reset minor version when major is incremented
+          PATCH=0  # Reset patch version when major is incremented
 
           # Construct the new version tag
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
@@ -47,16 +48,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          
+          # Check if the tag already exists in the remote repository
+          if git ls-remote --tags origin | grep -q "refs/tags/$NEW_VERSION"; then
+            echo "Tag $NEW_VERSION already exists. Skipping tag creation."
+            exit 0
+          fi
+
+          # Create and push the new tag
           git tag $NEW_VERSION
           git push origin $NEW_VERSION
-
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.NEW_VERSION }}
-          release_name: "Release for commit ${{ steps.get-latest-tag.outputs.LATEST_TAG }}"
-          body: "This release includes the following commit: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}"
-          draft: false
-          prerelease: false
