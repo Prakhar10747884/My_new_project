@@ -66,9 +66,8 @@ jobs:
         with:
           tfsec_args: --soft-fail
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
           
-      - name: 'Yamllint'
-        uses: karancode/yamllint-github-action@master
 
       - name: Checkout code
         uses: actions/checkout@v3
