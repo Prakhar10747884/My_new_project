@@ -64,7 +64,7 @@ jobs:
         run: |
           VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo "Current version: $VERSION"
-          echo "echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Calculate the next version
         id: increment_version
