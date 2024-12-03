@@ -1,4 +1,4 @@
-name: CI Workflow with Bandit, Terraform, and TFSec okk
+name: CI Workflow with Bandit, Terraform, and TFSec
 
 on:
   push:
@@ -66,12 +66,9 @@ jobs:
           curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | sudo bash
 
       - name: Run TFSec
-        run: tfsec .
+        run: tfsec -f html -o tfsec_report.html .
 
       - name: Upload TFSec Report
-        run: |
-          tfsec --out tfsec_report.html --format html .
-          echo "::set-output name=tfsec_report::$(cat tfsec_report.html)"
         uses: actions/upload-artifact@v3
         with:
           name: tfsec-report
@@ -106,7 +103,7 @@ jobs:
       - name: Calculate the next version
         id: increment_version
         run: |
-          VERSION=${{ steps.get_version.outputs.VERSION }}
+          VERSION=${{ env.VERSION }}
           IFS='.' read -r -a VERSION_PARTS <<< "${VERSION#v}"
           MAJOR=${VERSION_PARTS[0]}
           MINOR=${VERSION_PARTS[1]}
@@ -118,6 +115,7 @@ jobs:
           MINOR=$((MINOR)) 
           PATCH=$((PATCH))
 
+          # Function to generate a new version
           generate_new_version() {
             while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
               echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing the version..."
