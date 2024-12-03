@@ -1,4 +1,4 @@
-name: CI Workflow with Bandit and Tagging
+name: CI Workflow with Bandit and Tagging and complete
 
 on:
   push:
