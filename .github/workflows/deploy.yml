@@ -64,7 +64,7 @@ jobs:
         run: |
           VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo "Current version: $VERSION"
-          echo "::set-output name=VERSION::$VERSION"
+          echo "echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Calculate the next version
         id: increment_version
@@ -84,7 +84,7 @@ jobs:
           done
 
           echo "New version: $NEW_VERSION"
-          echo "::set-output name=NEW_VERSION::$NEW_VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Create and push tag
         env:
