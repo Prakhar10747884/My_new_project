@@ -133,7 +133,7 @@ jobs:
 
 
       - name: 'Yamllint' 
-        uses: karancode/yamllint-github-action@master 
+        uses: karancode/yamllint-github-action@v2 
 
 
 
