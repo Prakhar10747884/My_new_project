@@ -61,18 +61,13 @@ jobs:
       - name: Validate Terraform
         run: terraform validate
 
-      - name: Install TFSec
-        run: |
-          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | sudo bash
+     
 
-      - name: Run TFSec
-        run: tfsec --out tfsec_report.html --format html . || true
-
-      - name: Upload TFSec Report
-        uses: actions/upload-artifact@v3
+      - name: tfsec
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
-          name: tfsec-report
-          path: tfsec_report.html
+          tfsec_args: --soft-fail
+          github_token: ${{ secrets.github.token }}
 
   tag-commit:
     runs-on: ubuntu-latest
