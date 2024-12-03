@@ -3,7 +3,7 @@ name: Tag Commits with Version
 on:
   push:
     branches:
-      - main # Branch to monitor for changes
+      - master # Branch to monitor for changes
 
 jobs:
   tag-commit:
