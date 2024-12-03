@@ -67,10 +67,6 @@ jobs:
           tfsec_args: --soft-fail
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: YAML Lint
-        uses: karancode/yamllint-github-action@master
-
-          
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -134,6 +130,10 @@ jobs:
           NEW_VERSION=${{ env.NEW_VERSION }}
           git tag $NEW_VERSION
           git push origin $NEW_VERSION
+
+
+      - name: 'Yamllint' 
+        uses: karancode/yamllint-github-action@master 
 
 
 
