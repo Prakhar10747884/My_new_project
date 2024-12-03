@@ -66,7 +66,7 @@ jobs:
           curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | sudo bash
 
       - name: Run TFSec
-        run: tfsec -f html -o tfsec_report.html .
+        run: tfsec -f html -O tfsec_report.html .
 
       - name: Upload TFSec Report
         uses: actions/upload-artifact@v3
