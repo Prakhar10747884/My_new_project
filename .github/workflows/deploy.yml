@@ -111,8 +111,8 @@ jobs:
           PATCH=$((PATCH))
           generate_new_version() {
             while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
-              echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing \
-                        the version..."
+              echo '"Tag v${MAJOR}.${MINOR}.${PATCH} already exists. \
+          Incrementing the version..."
               PATCH=$((PATCH + 1))
               if [ "$PATCH" -ge 100 ]; then
                 PATCH=0
