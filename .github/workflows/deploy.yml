@@ -67,8 +67,7 @@ jobs:
           tfsec_args: --soft-fail
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'Yamllint' 
-        uses: karancode/yamllint-github-action@v1.2.0
+
           
   tag-commit:
    runs-on: ubuntu-latest 
@@ -138,8 +137,24 @@ jobs:
           git push origin $NEW_VERSION
 
 
-      - name: 'Yamllint' 
-        uses: karancode/yamllint-github-action@v1
+
+
+  yamllint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Yamllint
+        uses: karancode/yamllint-github-action@v1.2.1
+        with:
+          yamllint_file_or_dir: '.'
+          yamllint_strict: false
+          yamllint_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 
 
