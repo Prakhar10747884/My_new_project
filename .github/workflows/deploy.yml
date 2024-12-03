@@ -110,7 +110,7 @@ jobs:
           MINOR=$((MINOR))
           PATCH=$((PATCH))
           generate_new_version() {
-            while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
+           while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1;do
               echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists."
               echo "Incrementing the version..."
               PATCH=$((PATCH + 1))
