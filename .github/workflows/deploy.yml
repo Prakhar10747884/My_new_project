@@ -74,8 +74,12 @@ jobs:
           MAJOR=${VERSION_PARTS[0]}
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
-          PATCH=$((PATCH + 1))
-          NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
+
+          echo "Parsed version parts: MAJOR=$MAJOR, MINOR=$MINOR, PATCH=$PATCH"
+
+          MAJOR=$((MAJOR)) 
+          MINOR=$((MINOR)) 
+          PATCH=$((PATCH))
 
           # Ensure the new version tag is unique
           while git rev-parse "$NEW_VERSION" >/dev/null 2>&1; do
