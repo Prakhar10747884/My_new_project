@@ -67,7 +67,13 @@ jobs:
           tfsec_args: --soft-fail
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-
+      - name: 'Yamllint' 
+        uses: karancode/yamllint-github-action@v1.2.0
+          
+  tag-commit:
+   runs-on: ubuntu-latest 
+   needs: [bandit-check, terraform-check]
+   steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
