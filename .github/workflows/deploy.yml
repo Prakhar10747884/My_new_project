@@ -1,4 +1,4 @@
-name: CI Workflow with Bandit and Tagging
+name: CI Workflow with Bandit and Tagging and complete
 
 on:
   push:
@@ -90,6 +90,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          NEW_VERSION=${{ env.NEW_VERSION }}
+          NEW_VERSION=${{ steps.increment_version.outputs.NEW_VERSION }}
           git tag $NEW_VERSION
           git push origin $NEW_VERSION
