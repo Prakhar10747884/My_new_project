@@ -68,7 +68,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: YAML Lint
-        uses: karancode/yamllint-github-action@v1
+        uses: karancode/yamllint-github-action@master
 
           
 
