@@ -82,7 +82,20 @@ jobs:
             PATCH=$((PATCH + 1))
             NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
           done
-
+          generate_new_version() {
+                while git rev-parse "v${MAJOR}.${MINOR}.${PATCH}" >/dev/null 2>&1; do
+                  echo "Tag v${MAJOR}.${MINOR}.${PATCH} already exists. Incrementing the version..."
+                  PATCH=$((PATCH + 1))
+                  if [ "$PATCH" -ge 100 ]; then
+                  PATCH=0
+                  MINOR=$((MINOR + 1))
+                  fi
+                done
+              }
+          PATCH=$((PATCH + 1))
+          generate_new_version
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          
           echo "New version: $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
