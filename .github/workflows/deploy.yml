@@ -36,9 +36,9 @@ jobs:
 
         run: |
 
-          git config --global user.name 'Arpita Patnaik'
+          git config --global user.name "${GITHUB_USER_NAME}"
 
-          git config --global user.email 'arpita.10718326@ltimindtree.com'
+          git config --global user.email "${GITHUB_USER_EMAIL}"
  
       - name: Fetch tags
 
