@@ -68,6 +68,8 @@ jobs:
           tfsec_args: --soft-fail
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: YAML Lint
+        uses: karancode/yamllint-github-action@v1
 
           
   tag-commit:
