@@ -50,7 +50,11 @@ jobs:
     
 
       - name: Taggers and Release
-        uses: ArvindSinghRawat/Automatic-Semantic-versioning-semver-Tagging@main
+        uses: fischerscode/tagger@v0.2
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          prefix: v
+          
+          tag: ${{ github.ref }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
           
