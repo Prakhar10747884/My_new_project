@@ -49,5 +49,5 @@ jobs:
       - name: Taggers and Release
         uses: tvdias/github-tagger@v0.0.1
         with:
-           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-           tag: "v0.0.0"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          tag: "v0.0.0"
