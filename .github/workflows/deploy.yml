@@ -53,8 +53,7 @@ jobs:
         uses: fischerscode/tagger@v0.2
         with:
           prefix: v
-          
-          tag: ${{ github.ref }}
+          tag: "0.0.4"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           
           
