@@ -20,6 +20,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+         fetch-depth: 0
+         fetch-tags: true
+         set-safe-directory: true
 
       - name: Bandit Check
         uses: jpetrucciani/bandit-check@main
@@ -47,7 +51,7 @@ jobs:
         uses: karancode/yamllint-github-action@master
 
       - name: Taggers and Release
-        uses: tvdias/github-tagger@v0.0.1
+        uses: ArvindSinghRawat/Automatic-Semantic-versioning-semver-Tagging@main
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          tag: "v0.0.0"
+          
