@@ -2,7 +2,7 @@ name: Autotag and Release
 on:
   push:
     branches:
-      - master
+      - main
 
 permissions:
   contents: write
