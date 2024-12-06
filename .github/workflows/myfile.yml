@@ -1,4 +1,4 @@
-name: Autotag and Release
+name: Autotag and Auto Release
 on:
   push:
     branches:
