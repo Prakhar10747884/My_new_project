@@ -3,11 +3,9 @@ name: CI Workflow with Bandit, Terraform, and TFSec
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+      - master
+
+
 
 permissions:
   contents: write
