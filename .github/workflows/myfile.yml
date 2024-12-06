@@ -1,17 +1,23 @@
-name: Autotag and Auto Release
+# .github/workflows/release-draft.yml
+
+name: Release Draft
+
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+  release:
+      types: [published]
 
 permissions:
   contents: write
 
 jobs:
-  tag-release:
+  release_draft:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pantheon-systems/action-autotag@v0
-        with:
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release Draft
+      uses: crs-k/release-draft@v0.6.1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
