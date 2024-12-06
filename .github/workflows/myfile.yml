@@ -16,7 +16,7 @@ jobs:
         with:
           prefix: Semantic Version Release Action
           version: v4.0.0
-          prerelease: true
+          prerelease: false
           files: |
             LICENSE
 
