@@ -1,4 +1,4 @@
-name: My pipeline
+name: My pipeline Repo
 on:
   push:
     branches:
