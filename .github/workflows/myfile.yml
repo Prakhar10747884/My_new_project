@@ -1,16 +1,16 @@
 name: Release tag
 
-on:
+
+on: 
   push:
     branches:
       - master
-
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - uses: planet-code/release-tag-action@1.1.0
+      - uses: avakar/tag-and-release@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          release-branch-format: "release/"
-          show-changelog: true
+          tag_name: ${{ 1.0.0 }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
