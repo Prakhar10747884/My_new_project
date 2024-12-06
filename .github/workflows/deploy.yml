@@ -1,25 +1,15 @@
----
-name: Creating tags
+name: Tag release
+
 on:
-  release: # (1)
-    types:
-      - released
-      - edited
-  push: # (1)
+  push:
     tags:
-      - 'v?[0-9]+.[0-9]+.[0-9]+'
-    branches-ignore:
-      - '**'
-    paths-ignore:
-      - '**'
+      - v*
 
 jobs:
-  actions-tagger:
-    runs-on: windows-latest
-    permissions: # (2)
-      contents: write
+  test:
+    runs-on: ubuntu-latest
+    name: Create or update major release tag
     steps:
-      - uses: Actions-R-Us/actions-tagger@v2
-        with:
-          publish_latest_tag: true
-
+      - uses: actions/checkout@v4
+      - name: Run release-tagger
+        uses: tj-actions/release-tagger@v4
