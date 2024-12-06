@@ -2,7 +2,7 @@ name: My pipeline
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
       - 'release/**'
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
         id: set_version
         uses: kvendingoldo/semver-action@v1.20.2
         with:
-          primary_branch: main
+          primary_branch: master
           enable_github_releases: true
           release_tag_prefix: "v"
           github_token: "${{ secrets.GITHUB_TOKEN }}"
