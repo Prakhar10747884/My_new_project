@@ -14,4 +14,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pantheon-systems/action-autotag@v0
         with:
-          gh-token: ${{ github.token }}
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
