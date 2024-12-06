@@ -1,0 +1,58 @@
+---
+name: CI Workflow with Bandit, Terraform, and TFSec
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          set-safe-directory: true
+
+      - name: Bandit Check
+        uses: jpetrucciani/bandit-check@main
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: latest
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Validate Terraform
+        run: terraform validate
+
+      - name: Format Terraform
+        run: terraform fmt -check
+
+      - name: tfsec-pr-commenter
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate and Release Tag
+        uses: anothrNick/github-tag-action@1.36.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: main
+          custom_release_title: 'Release ${{ steps.tag.outputs.new_tag }}'
+          create_annotated_tag: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
