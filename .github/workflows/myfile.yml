@@ -2,21 +2,15 @@ name: My pipeline
 on:
   push:
     branches:
-      - 'master'
-      - 'release/**'
+      - master
+    
 
 jobs:
-  build:
+
+  release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-          
-      - uses: EasyDesk/action-semver-release@v1
+      - uses: PIMPfiction/AutoTagVersionRelease@v1
         with:
-          prefix: Semantic Version Release Action
-          version: v1.0.0
-          prerelease: false
-          files: |
-            LICENSE
+          github-token: ${{ secrets.GITHUB_TOKEN}}
 
