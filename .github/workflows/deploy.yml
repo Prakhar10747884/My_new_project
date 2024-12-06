@@ -1,15 +1,32 @@
-name: Tag release
+---
+name: CI Workflow with Bandit, Terraform, and TFSec
 
 on:
   push:
     branches:
-      - master
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  test:
+  pipeline:
     runs-on: ubuntu-latest
-    name: Create or update major release tag
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Run release-tagger
-        uses: tj-actions/release-tagger@v4
+
+
+      - name: Generate and Release Tag
+        uses: anothrNick/github-tag-action@1.36.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: main
+          custom_release_title: 'Release ${{ steps.tag.outputs.new_tag }}'
+          create_annotated_tag: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
