@@ -15,7 +15,7 @@ jobs:
       - uses: EasyDesk/action-semver-release@v1
         with:
           prefix: Semantic Version Release Action
-          version: v4.0.0
+          version: v1.0.0
           prerelease: false
           files: |
             LICENSE
