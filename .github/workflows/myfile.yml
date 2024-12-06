@@ -1,10 +1,8 @@
 name: Release tag
 
 
-on: 
-  push:
-    branches:
-      - master
+
+on: push
 jobs:
   release:
     runs-on: ubuntu-latest
