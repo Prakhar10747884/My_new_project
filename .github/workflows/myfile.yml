@@ -1,59 +1,16 @@
-name: CI Workflow with Bandit, Terraform, and TFSec
+name: Release tag
 
 on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
-  workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
-  pipeline:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: planet-code/release-tag-action@1.1.0
         with:
-          fetch-depth: 0
-          fetch-tags: true
-          set-safe-directory: true
-
-      - name: Bandit Check
-        uses: jpetrucciani/bandit-check@main
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: latest
-
-      - name: Initialize Terraform
-        run: terraform init
-
-      - name: Validate Terraform
-        run: terraform validate
-
-      - name: Format Terraform
-        run: terraform fmt -check
-
-      - name: tfsec-pr-commenter
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Tag and Release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: 'Release ${{ github.ref }}'
-          body: |
-            Automatically generated release for tag ${{ github.ref }}.
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-branch-format: "release\/"
+          show-changelog: true
