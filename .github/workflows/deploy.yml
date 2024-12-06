@@ -1,86 +1,25 @@
 ---
-name: CI Workflow with Bandit, Terraform, and TFSec
-
+name: Creating tags
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-  workflow_dispatch:
-
-permissions:
-  contents: write
+  release: # (1)
+    types:
+      - released
+      - edited
+  push: # (1)
+    tags:
+      - 'v?[0-9]+.[0-9]+.[0-9]+'
+    branches-ignore:
+      - '**'
+    paths-ignore:
+      - '**'
 
 jobs:
-  pipeline:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-          set-safe-directory: true
-
-      - name: Bandit Check
-        uses: jpetrucciani/bandit-check@main
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: latest
-
-      - name: Initialize Terraform
-        run: terraform init
-
-      - name: Validate Terraform
-        run: terraform validate
-
-      - name: Format Terraform
-        run: terraform fmt -check
-
-      - name: tfsec-pr-commenter
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Tag
-        id: tag
-        uses: mazaheriMahdi/auto-tagger-action@v0.0.10
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Latest Tag
-        run: echo "The Latest version ${{ steps.tag.outputs.tag }}"
-
-    outputs:
-      tag: ${{ steps.tag.outputs.tag }}
-
-  create-release:
-    permissions:
+  actions-tagger:
+    runs-on: windows-latest
+    permissions: # (2)
       contents: write
-    needs: pipeline
-    runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Latest Tag
-        run: echo "The latest version is ${{ needs.pipeline.outputs.tag }}"
-
-      - name: Create a Release
-        id: create_release
-        uses: actions/create-release@v1
+      - uses: Actions-R-Us/actions-tagger@v2
         with:
-          tag_name: ${{ needs.pipeline.outputs.tag }}
-          release_name: Release ${{ needs.pipeline.outputs.tag }}
-          body: |
-            Automatically generated release for tag ${{ needs.pipeline.outputs.tag }}.
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          publish_latest_tag: true
+
