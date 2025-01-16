@@ -1,17 +1,30 @@
-name: Autotag and Release
-on:
-  push:
-    branches:
-      - master
-
-permissions:
-  contents: write
-
-jobs:
-  tag-release:
-    runs-on: ubuntu-latest
-    steps:
-          - uses: actions/checkout@v4
-          - uses: pantheon-systems/action-autotag@v0
+--- 
+    name: Pipeline Workflow
+  
+  
+    on:
+      push:
+        branches:
+          - main
+  
+  
+    
+    permissions:
+      contents: write
+    
+    jobs:
+      pipeline:
+        runs-on: ubuntu-latest
+  
+      
+        steps:
+  
+          - name: Checkout code
+            uses: actions/checkout@v3
+    
+          - name: Tags and Release
+            uses: pantheon-systems/action-autotag@v0
             with:
-              gh-token: ${{ secrets.GITHUB_TOKEN }
+              gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+
