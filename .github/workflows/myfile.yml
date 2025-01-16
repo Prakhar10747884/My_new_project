@@ -1,23 +1,31 @@
-# .github/workflows/release-draft.yml
+--- 
+    name: Pipeline Workflow
+  
+  
+    on:
+      push:
+        branches:
+          - master
+  
+  
+    
+    permissions:
+      contents: write
+    
+    jobs:
+      pipeline:
+        runs-on: ubuntu-latest
+  
+      
+        steps:
+  
+          - name: Checkout code
+            uses: actions/checkout@v3
 
-name: Release Draft
+    
+          - name: Tags and releases
+            uses: pantheon-systems/action-autotag@v0
+            with:
+              gh-token: ${{ secrets.GITHUB_TOKEN }}
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-  release:
-      types: [published]
 
-permissions:
-  contents: write
-
-jobs:
-  release_draft:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Release Draft
-      uses: crs-k/release-draft@v0.6.1
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
