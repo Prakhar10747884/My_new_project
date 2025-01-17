@@ -1,28 +1,18 @@
 --- 
     name: Pipeline Workflow
-  
-  
     on:
       push:
         branches:
           - main
-  
-  
-    
     permissions:
       contents: write
     
     jobs:
       pipeline:
         runs-on: ubuntu-latest
-  
-      
         steps:
-  
           - name: Checkout code
             uses: actions/checkout@v3
-
-    
           - name: Tags and releases
             uses: pantheon-systems/action-autotag@v0
             with:
